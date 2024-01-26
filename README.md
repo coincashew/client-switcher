@@ -1,37 +1,38 @@
 # Ethereum Client Switcher
 
-Ethereum client switcher allows validators to easily switch their execution client (Geth, Besu, Nethermind) with a single click.
+Ethereum client switcher allows validators to easily switch their execution client (Besu, Nethermind, Erigon, Reth, Geth) with a single command!
 
-The code is open source and available for both CLI (terminal) and GUI to commodate various setups and preferences.
-
-### CLIENT SWITCHER (GUI):
-![Screenshot from 2024-01-23 11-35-14](https://github.com/accidental-green/client-switcher/assets/72235883/f26e0138-06ea-4894-a595-b11245cb54ea)
+The code is open source and available for CLI (terminal).
 
 ### CLIENT SWITCHER (CLI):
 ![Screenshot from 2024-01-23 21-50-08](https://github.com/accidental-green/client-switcher/assets/72235883/9f6cfa50-ed37-45df-a3aa-f28717c19264)
 
 
-## Instructions:
+## Install Unstructions:
 
-To begin installation, paste the following commands into the terminal:
+There are two ways to install.
+
+1. One-liner: easiest way for beginners
+
+```bash
+sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/coincashew/client-switcher/master/install.sh)"
+```
+
+2. Manual Install:
+Paste the following commands into the terminal:
 
 **Install updates and packages:**
 
-`sudo apt-get update && sudo apt-get install git curl python3-pip python3-tk -y && sudo pip install requests`
+`sudo apt-get update && sudo apt-get install git curl ccze python3-pip python3-tk -y && sudo pip install requests console-menu`
 
 **Clone the client-switcher repo:**
 
-`git clone https://github.com/accidental-green/client-switcher.git`
+`git clone https://github.com/coincashew/client-switcher.git`
 
 ### Run Client Switcher:
 
-**Note**: Choose either GUI (popup window) or CLI (in terminal)
 
-**GUI Installation:**
-
-`python3 client-switcher/client_switcher_gui.py`
-
-or **CLI Installation:**
+**CLI Installation:**
 
 `python3 client-switcher/client_switcher_cli.py`
 
