@@ -5,20 +5,18 @@ Ethereum client switcher allows validators to easily switch their execution clie
 The code is open source and available for CLI (terminal).
 
 ### CLIENT SWITCHER (CLI):
-![Screenshot from 2024-01-23 21-50-08](https://github.com/accidental-green/client-switcher/assets/72235883/9f6cfa50-ed37-45df-a3aa-f28717c19264)
-
 
 ## Install Unstructions:
 
 There are two ways to install.
 
-1. One-liner: easiest way for beginners
+*1. One-liner: easiest way for beginners*
 
 ```bash
 sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/coincashew/client-switcher/master/install.sh)"
 ```
 
-2. Manual Install:
+*2. Manual Install:*
 Paste the following commands into the terminal:
 
 **Install updates and packages:**
