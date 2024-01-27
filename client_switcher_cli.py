@@ -1,5 +1,5 @@
 # Author: coincashew.eth | coincashew.com
-# License: MIT
+# License: GNU
 # https://github.com/coincashew/client-switcher
 #
 # Acknowledgments
@@ -47,7 +47,7 @@ valid_networks = ['MAINNET', 'HOLESKY', 'SEPOLIA']
 index = SelectionMenu.get_selection(valid_networks,title=':: Execution Client Switcher :: by CoinCashew.eth',subtitle='Select Ethereum network:')
 
 # Exit selected
-if index == 5:
+if index == 3:
     sys.exit()
 
 eth_network=valid_networks[index]
