@@ -493,7 +493,7 @@ f'Description=Besu Execution Layer Client service for {eth_network.upper()}',
 'KillSignal=SIGINT',
 'TimeoutStopSec=900',
 'Environment="JAVA_OPTS=-Xmx5g"',
-f'ExecStart=/usr/local/bin/besu/bin/besu --network={eth_network} --p2p-port={EL_P2P_PORT} --rpc-http-port={EL_RPC_PORT} --max-peers={EL_MAX_PEER_COUNT} --metrics-enabled=true --metrics-port=6060 --rpc-http-enabled=true --sync-mode=X_SNAP --data-storage-format=BONSAI --data-path="/var/lib/besu" --engine-jwt-secret={JWTSECRET_PATH} {_highspec}',
+f'ExecStart=/usr/local/bin/besu/bin/besu --network={eth_network} --p2p-port={EL_P2P_PORT} --rpc-http-port={EL_RPC_PORT} --max-peers={EL_MAX_PEER_COUNT} --metrics-enabled=true --metrics-port=6060 --rpc-http-enabled=true --sync-mode=SNAP --data-storage-format=BONSAI --data-path="/var/lib/besu" --engine-jwt-secret={JWTSECRET_PATH} {_highspec}',
 ''
 '[Install]',
 'WantedBy=multi-user.target',

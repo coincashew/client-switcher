@@ -90,9 +90,11 @@ linux_install_python() {
     fi
     exit_on_error $?
     ohai "Installing python tools"
-    sudo apt-get install --no-install-recommends --no-install-suggests -y $python-pip $python-tk
+    sudo apt-get install --no-install-recommends --no-install-suggests -y $python-pip $python-tk $python-venv
+    ohai "Creating venv"
+    $python -m venv ~/.local --system-site-packages
     ohai "Installing pip requirements"
-    sudo pip install requests console-menu
+    ~/.local/bin/pip install requests console-menu
     exit_on_error $?
 }
 
