@@ -281,8 +281,8 @@ if execution_client_install == 'besu':
     # Remove the downloaded .tar.gz file
     os.remove(f"besu-{latest_version}.tar.gz")
 
-    # Install OpenJDK-17-JRE
-    subprocess.run(["sudo", "apt", "-y", "install", "openjdk-17-jre"])
+    # Install OpenJDK-21-JRE
+    subprocess.run(["sudo", "apt", "-y", "install", "openjdk-21-jre"])
 
     # Install libjemalloc-dev
     subprocess.run(["sudo", "apt", "install", "-y", "libjemalloc-dev"])
