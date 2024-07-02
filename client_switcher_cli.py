@@ -363,9 +363,10 @@ if execution_client_install == 'reth':
     tar_filename = None
     for asset in assets:
         if asset['name'].endswith('x86_64-unknown-linux-gnu.tar.gz'):
-            download_url = asset['browser_download_url']
-            tar_filename = asset['name']
-            break
+            if asset['name'].startswith('reth'):
+                download_url = asset['browser_download_url']
+                tar_filename = asset['name']
+                break
 
     if download_url is None or tar_filename is None:
         print("Error: Could not find the download URL for the latest release.")
@@ -530,7 +531,7 @@ f'Description=Reth Execution Layer Client service for {eth_network.upper()}',
 'KillSignal=SIGINT',
 'TimeoutStopSec=900',
 'Environment=RUST_LOG=info',
-f'ExecStart=/usr/local/bin/reth node --full --chain {eth_network} --datadir=/var/lib/reth --metrics 127.0.0.1:6060 --port {EL_P2P_PORT} --http --http.port {EL_RPC_PORT} --http.api="rpc,eth,web3,net,debug" --log.file.directory=/var/lib/reth/logs --authrpc.jwtsecret={JWTSECRET_PATH} --max-outbound-peers {EL_MAX_PEER_COUNT} --max-inbound-peers {EL_MAX_PEER_COUNT}',
+f'ExecStart=/usr/local/bin/reth node --full --chain {eth_network} --datadir=/var/lib/reth --metrics 127.0.0.1:6060 --port {EL_P2P_PORT} --discovery.port {EL_P2P_PORT} --http --http.port {EL_RPC_PORT} --http.api="rpc,eth,web3,net,debug" --log.file.directory=/var/lib/reth/logs --authrpc.jwtsecret={JWTSECRET_PATH} --max-outbound-peers {EL_MAX_PEER_COUNT} --max-inbound-peers {EL_MAX_PEER_COUNT}',
 '',
 '[Install]',
 'WantedBy=multi-user.target',

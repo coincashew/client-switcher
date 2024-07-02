@@ -108,7 +108,7 @@ linux_update_pip() {
 linux_install_client-switcher() {
     ohai "Cloning client-switcher into ~/git/client-switcher"
     mkdir -p ~/git/client-switcher
-    git clone https://github.com/coincashew/client-switcher.git ~/git/client-switcher/ 2> /dev/null || (cd ~/git/client-switcher ; git fetch origin master ; git checkout master ; git pull --ff-only ; git reset --hard ; git clean -xdf)
+    git clone https://github.com/coincashew/client-switcher.git ~/git/client-switcher/ 2> /dev/null || (cd ~/git/client-switcher ; git fetch origin master ; git checkout master ; git pull)
     ohai "Installing client-switcher"
     $python ~/git/client-switcher/client_switcher_cli.py
     exit_on_error $?
