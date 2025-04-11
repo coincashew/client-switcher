@@ -41,13 +41,13 @@ except subprocess.CalledProcessError:
 
 # Define valid execution clients and networks
 valid_clients = ['BESU', 'NETHERMIND', 'ERIGON', 'RETH', 'GETH', 'NONE']
-valid_networks = ['MAINNET', 'HOLESKY', 'SEPOLIA']
+valid_networks = ['MAINNET', 'HOODI', 'SEPOLIA']
 
 # Ask the user for Ethereum network
 index = SelectionMenu.get_selection(valid_networks,title=':: Execution Client Switcher :: by CoinCashew.eth',subtitle='Select Ethereum network:')
 
 # Exit selected
-if index == 3:
+if index == len(valid_networks):
     sys.exit()
 
 eth_network=valid_networks[index]
@@ -396,7 +396,7 @@ if execution_client_install == 'erigon':
    subprocess.run(['sudo', 'chown', '-R', 'execution:execution', '/var/lib/erigon'])
 
    # Define the Github API endpoint to get the latest release
-   url = "https://api.github.com/repos/ledgerwatch/erigon/releases/latest"
+   url = "https://api.github.com/repos/erigontech/erigon/releases/latest"
 
    # Send a GET request to the API endpoint
    response = requests.get(url)
@@ -420,9 +420,7 @@ if execution_client_install == 'erigon':
    urllib.request.urlretrieve(download_url, f"{tar_filename}")
 
    # Extract the tar.gz file
-   with tarfile.open(f"{tar_filename}", "r:gz") as tar:
-       tar.extractall(path='/usr/local/bin')
-       tar.close()
+   subprocess.run(["sudo", "tar", "xzf", f"{tar_filename}", "-C", "/usr/local/bin", "--strip-components=1"])
 
    # chown execution:execution /usr/local/bin/erigon
    subprocess.run(["sudo", "chown", "execution:execution", "/usr/local/bin/erigon"])
@@ -604,7 +602,7 @@ f'Description=Erigon Execution Layer Client service for {eth_network.upper()}',
 'KillSignal=SIGINT',
 'TimeoutStopSec=900',
 'Environment=RUST_LOG=info',
-f'ExecStart=/usr/local/bin/erigon --datadir /var/lib/erigon --chain {eth_network} --port {EL_P2P_PORT} --torrent.port 42069 --http.port {EL_RPC_PORT} --maxpeers {EL_MAX_PEER_COUNT} --metrics --pprof --prune htc --authrpc.jwtsecret={JWTSECRET_PATH}',
+f'ExecStart=/usr/local/bin/erigon --datadir /var/lib/erigon --chain {eth_network} --port {EL_P2P_PORT} --torrent.port 42069 --http.port {EL_RPC_PORT} --maxpeers {EL_MAX_PEER_COUNT} --metrics --pprof --prune.mode=minimal --externalcl --authrpc.jwtsecret={JWTSECRET_PATH}',
 '',
 '[Install]',
 'WantedBy=multi-user.target',
