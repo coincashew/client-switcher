@@ -672,7 +672,7 @@ print(f"Client switch complete!\n")
 answer=PromptUtils(Screen()).prompt_for_yes_or_no(f"Start {execution_client_install.upper()} and begin syncing?")
 
 print("\n########### NEXT STEPS #############\n")
-print(f'\nFor more information, refer to https://docs.coincashew.com/coins/overview-eth/guide-or-how-to-setup-a-validator-on-eth2-mainnet');
+print(f'\nFor more information, refer to https://docs.coincashew.com/ethpillar');
 if not answer:
     print(f'\nWhen ready, run the following command to start {execution_client_install.upper()}')
     print(f'\nsudo systemctl start execution')
