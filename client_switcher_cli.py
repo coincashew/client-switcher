@@ -430,11 +430,17 @@ if execution_client_install == 'erigon':
 
 ###### GETH SERVICE FILE #############
 if execution_client_install == 'geth':
+    # Process sync barriers
+    if eth_network=="mainnet" or eth_network=="sepolia":
+        _syncparameters='--history.chain postmerge'
+    else:
+        _syncparameters=''
+
     geth_service_file_lines = [
 '[Unit]',
 f'Description=Geth Execution Layer Client service for {eth_network.upper()}',
 'After=network-online.target',
-'Documentation=https://www.coincashew.com',
+'Documentation=https://docs.coincashew.com',
 '',
 '[Service]',
 'Type=simple',
@@ -444,7 +450,7 @@ f'Description=Geth Execution Layer Client service for {eth_network.upper()}',
 'RestartSec=3',
 'KillSignal=SIGINT',
 'TimeoutStopSec=900',
-f'ExecStart=/usr/local/bin/geth --{eth_network} --port {EL_P2P_PORT} --http.port {EL_RPC_PORT} --maxpeers {EL_MAX_PEER_COUNT} --metrics --http --datadir=/var/lib/geth --pprof --state.scheme=path --authrpc.jwtsecret={JWTSECRET_PATH}',
+f'ExecStart=/usr/local/bin/geth --{eth_network} --port {EL_P2P_PORT} --http.port {EL_RPC_PORT} --maxpeers {EL_MAX_PEER_COUNT} --metrics --http --datadir=/var/lib/geth --pprof --state.scheme=path --authrpc.jwtsecret={JWTSECRET_PATH} {_syncparameters}',
 '',
 '[Install]',
 'WantedBy=multi-user.target',
@@ -464,24 +470,12 @@ f'ExecStart=/usr/local/bin/geth --{eth_network} --port {EL_P2P_PORT} --http.port
 ############ BESU SERVICE FILE ###############
 
 if execution_client_install == 'besu':
-    try:
-        output = subprocess.check_output(["bash", "-c", "free -m | grep Mem: | awk '{print $2}'"], universal_newlines=True)
-        total_mem = int(output)
-        print(total_mem)
-        if total_mem > 30 * 1024:
-            print("More than 30GB RAM. Enabling rocksdb high spec.")
-            _highspec='--Xplugin-rocksdb-high-spec-enabled'
-        else:
-            _highspec=''
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing command: {e}")
-
     besu_service_file_lines = [
 '[Unit]',
 f'Description=Besu Execution Layer Client service for {eth_network.upper()}',
 'Wants=network-online.target',
 'After=network-online.target',
-'Documentation=https://www.coincashew.com',
+'Documentation=https://docs.coincashew.com',
 '',
 '[Service]',
 'Type=simple',
@@ -492,7 +486,7 @@ f'Description=Besu Execution Layer Client service for {eth_network.upper()}',
 'KillSignal=SIGINT',
 'TimeoutStopSec=900',
 'Environment="JAVA_OPTS=-Xmx5g"',
-f'ExecStart=/usr/local/bin/besu/bin/besu --network={eth_network} --p2p-port={EL_P2P_PORT} --rpc-http-port={EL_RPC_PORT} --max-peers={EL_MAX_PEER_COUNT} --metrics-enabled=true --metrics-port=6060 --rpc-http-enabled=true --sync-mode=SNAP --data-storage-format=BONSAI --data-path="/var/lib/besu" --engine-jwt-secret={JWTSECRET_PATH} {_highspec}',
+f'ExecStart=/usr/local/bin/besu/bin/besu --network={eth_network} --p2p-port={EL_P2P_PORT} --rpc-http-port={EL_RPC_PORT} --max-peers={EL_MAX_PEER_COUNT} --metrics-enabled=true --metrics-port=6060 --rpc-http-enabled=true --sync-mode=SNAP --data-storage-format=BONSAI --data-path="/var/lib/besu" --engine-jwt-secret={JWTSECRET_PATH}',
 ''
 '[Install]',
 'WantedBy=multi-user.target',
@@ -513,12 +507,20 @@ f'ExecStart=/usr/local/bin/besu/bin/besu --network={eth_network} --p2p-port={EL_
 if execution_client_install == 'reth':
     EL_MAX_PEER_COUNT=int(EL_MAX_PEER_COUNT)//2
 
+    # Process sync barriers
+    if eth_network=="mainnet":
+        _syncparameters='--prune.bodies.pre-merge --prune.receipts.before 15537394'
+    elif eth_network=="sepolia":
+        _syncparameters='--prune.bodies.pre-merge --prune.receipts.before 1450409'
+    else:
+        _syncparameters=''
+
     reth_service_file_lines = [
 '[Unit]',
 f'Description=Reth Execution Layer Client service for {eth_network.upper()}',
 'Wants=network-online.target',
 'After=network-online.target',
-'Documentation=https://www.coincashew.com',
+'Documentation=https://docs.coincashew.com',
 '',
 '[Service]',
 'Type=simple',
@@ -529,7 +531,7 @@ f'Description=Reth Execution Layer Client service for {eth_network.upper()}',
 'KillSignal=SIGINT',
 'TimeoutStopSec=900',
 'Environment=RUST_LOG=info',
-f'ExecStart=/usr/local/bin/reth node --full --chain {eth_network} --datadir=/var/lib/reth --metrics 127.0.0.1:6060 --port {EL_P2P_PORT} --discovery.port {EL_P2P_PORT} --http --http.port {EL_RPC_PORT} --http.api="rpc,eth,web3,net,debug" --log.file.directory=/var/lib/reth/logs --authrpc.jwtsecret={JWTSECRET_PATH} --max-outbound-peers {EL_MAX_PEER_COUNT} --max-inbound-peers {EL_MAX_PEER_COUNT}',
+f'ExecStart=/usr/local/bin/reth node --chain {eth_network} --datadir=/var/lib/reth --metrics 127.0.0.1:6060 --port {EL_P2P_PORT} --discovery.port {EL_P2P_PORT} --http --http.port {EL_RPC_PORT} --http.api="rpc,eth,web3,net,debug" --log.file.directory=/var/lib/reth/logs --authrpc.jwtsecret={JWTSECRET_PATH} --max-outbound-peers {EL_MAX_PEER_COUNT} --max-inbound-peers {EL_MAX_PEER_COUNT} {_syncparameters}',
 '',
 '[Install]',
 'WantedBy=multi-user.target',
@@ -549,12 +551,20 @@ f'ExecStart=/usr/local/bin/reth node --full --chain {eth_network} --datadir=/var
 
 ####### NETHERMIND SERVICE FILE ###########
 if execution_client_install == 'nethermind':
+    # Process sync barriers
+    if eth_network=="mainnet":
+        _syncparameters='--Sync.AncientBodiesBarrier=15537394 --Sync.AncientReceiptsBarrier=15537394'
+    elif eth_network=="sepolia":
+        _syncparameters='--Sync.AncientBodiesBarrier=1450408 --Sync.AncientReceiptsBarrier=1450408'
+    else:
+        _syncparameters=''
+
     nethermind_service_file_lines = [
 '[Unit]',
 f'Description=Nethermind Execution Layer Client service for {eth_network.upper()}',
 'Wants=network-online.target',
 'After=network-online.target',
-'Documentation=https://www.coincashew.com',
+'Documentation=https://docs.coincashew.com',
 '',
 '[Service]',
 'Type=simple',
@@ -566,7 +576,7 @@ f'Description=Nethermind Execution Layer Client service for {eth_network.upper()
 'TimeoutStopSec=900',
 'WorkingDirectory=/var/lib/nethermind',
 'Environment="DOTNET_BUNDLE_EXTRACT_BASE_DIR=/var/lib/nethermind"',
-f'ExecStart=/usr/local/bin/nethermind/nethermind --config {eth_network} --datadir="/var/lib/nethermind" --Network.DiscoveryPort {EL_P2P_PORT} --Network.P2PPort {EL_P2P_PORT} --Network.MaxActivePeers {EL_MAX_PEER_COUNT} --JsonRpc.Port {EL_RPC_PORT} --Metrics.Enabled true --Metrics.ExposePort 6060 --JsonRpc.JwtSecretFile {JWTSECRET_PATH}',
+f'ExecStart=/usr/local/bin/nethermind/nethermind --config {eth_network} --datadir="/var/lib/nethermind" --Network.DiscoveryPort {EL_P2P_PORT} --Network.P2PPort {EL_P2P_PORT} --Network.MaxActivePeers {EL_MAX_PEER_COUNT} --JsonRpc.Port {EL_RPC_PORT} --Metrics.Enabled true --Metrics.ExposePort 6060 --JsonRpc.JwtSecretFile {JWTSECRET_PATH} {_syncparameters}',
 '',
 '[Install]',
 'WantedBy=multi-user.target',
@@ -591,7 +601,7 @@ if execution_client_install == 'erigon':
 f'Description=Erigon Execution Layer Client service for {eth_network.upper()}',
 'Wants=network-online.target',
 'After=network-online.target',
-'Documentation=https://www.coincashew.com',
+'Documentation=https://docs.coincashew.com',
 '',
 '[Service]',
 'Type=simple',
@@ -662,7 +672,7 @@ print(f"Client switch complete!\n")
 answer=PromptUtils(Screen()).prompt_for_yes_or_no(f"Start {execution_client_install.upper()} and begin syncing?")
 
 print("\n########### NEXT STEPS #############\n")
-print(f'\nFor more information, refer to https://www.coincashew.com/coins/overview-eth/guide-or-how-to-setup-a-validator-on-eth2-mainnet');
+print(f'\nFor more information, refer to https://docs.coincashew.com/coins/overview-eth/guide-or-how-to-setup-a-validator-on-eth2-mainnet');
 if not answer:
     print(f'\nWhen ready, run the following command to start {execution_client_install.upper()}')
     print(f'\nsudo systemctl start execution')
