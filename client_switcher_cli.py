@@ -509,9 +509,9 @@ if execution_client_install == 'reth':
 
     # Process sync barriers
     if eth_network=="mainnet":
-        _syncparameters='--prune.bodies.pre-merge --prune.receipts.before 15537394'
+        _syncparameters='--prune.bodies.pre-merge --prune.receipts.pre-merge'
     elif eth_network=="sepolia":
-        _syncparameters='--prune.bodies.pre-merge --prune.receipts.before 1450409'
+        _syncparameters='--prune.bodies.pre-merge --prune.receipts.pre-merge'
     else:
         _syncparameters=''
 
@@ -531,7 +531,7 @@ f'Description=Reth Execution Layer Client service for {eth_network.upper()}',
 'KillSignal=SIGINT',
 'TimeoutStopSec=900',
 'Environment=RUST_LOG=info',
-f'ExecStart=/usr/local/bin/reth node --chain {eth_network} --datadir=/var/lib/reth --metrics 127.0.0.1:6060 --port {EL_P2P_PORT} --discovery.port {EL_P2P_PORT} --http --http.port {EL_RPC_PORT} --http.api="rpc,eth,web3,net,debug" --log.file.directory=/var/lib/reth/logs --authrpc.jwtsecret={JWTSECRET_PATH} --max-outbound-peers {EL_MAX_PEER_COUNT} --max-inbound-peers {EL_MAX_PEER_COUNT} {_syncparameters}',
+f'ExecStart=/usr/local/bin/reth node --full --chain {eth_network} --datadir=/var/lib/reth --metrics 127.0.0.1:6060 --port {EL_P2P_PORT} --discovery.port {EL_P2P_PORT} --http --http.port {EL_RPC_PORT} --http.api="rpc,eth,web3,net,debug" --log.file.directory=/var/lib/reth/logs --authrpc.jwtsecret={JWTSECRET_PATH} --max-outbound-peers {EL_MAX_PEER_COUNT} --max-inbound-peers {EL_MAX_PEER_COUNT} {_syncparameters}',
 '',
 '[Install]',
 'WantedBy=multi-user.target',
